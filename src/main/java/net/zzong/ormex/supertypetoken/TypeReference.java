@@ -13,7 +13,7 @@ public class TypeReference<T>{
         if(stype instanceof ParameterizedType){
             this.type = ((ParameterizedType) stype).getActualTypeArguments()[0];
         }
-        else throw new RuntimeException();
+        else throw new RuntimeException("TypeReference 가 지원하는게 아닙니다.");
     }
 
     @Override

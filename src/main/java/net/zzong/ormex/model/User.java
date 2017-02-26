@@ -17,12 +17,8 @@ import java.util.Date;
 @Table(name="users")
 public class User {
 	@Id
-	@Column(name="dfd")
 	private long id;
 	private String name;
-
-
-	@Transient
 	private String email;
 	private Date regdt;
 }
