@@ -46,6 +46,6 @@ public class ObjectInformation<T> {
                 .orElse(null);
         keyField.setAccessible(true);
 
-        System.out.println("keyField = "+keyField);
+        //System.out.println("keyField = "+keyField);
     }
 }

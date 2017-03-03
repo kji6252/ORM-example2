@@ -1,18 +1,20 @@
 package net.zzong.omex.om;
 
 import net.zzong.omex.model.User;
+import net.zzong.omex.supertypetoken.TypeReference;
 import org.junit.Test;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.ParameterizedType;
 import java.util.*;
 
 /**
  * Created by 김종인 on 2017-02-26.
  */
-public class exTest {
+public class exTest extends OMMaper {
     @Test
     public void 클래스정보가져오기(){
         System.out.println(User.class);
@@ -75,6 +77,19 @@ public class exTest {
         System.out.println(sup.getClass().getGenericSuperclass());
         System.out.println(list.getClass().getGenericSuperclass());
     }
+
+    @Test
+    public void 슈퍼타입토큰2() throws IntrospectionException {
+        class Sub<T>{}
+        class Sup extends Sub<List<String>> {}
+
+        ParameterizedType pt = (ParameterizedType) new Sup().getClass().getGenericSuperclass();
+
+        System.out.println(pt.getActualTypeArguments()[0]);
+
+        System.out.println(new TypeReference<List<String>>(){}.type);
+    }
+
 
 
 

@@ -4,6 +4,7 @@ package net.zzong.omex.om;
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -44,76 +45,60 @@ public class OMMaper {
     public <T> T classQuery(String sql, Class<T> returnClass) {
         T returnObject = null;
         ObjectInformation<T> objectInformation = (ObjectInformation<T>) this.OMMperFactory.getObjectInformationMap().get(returnClass);
+        List<PropertyDescriptor> propertyDescriptors = Arrays.asList(objectInformation.getBeanInfo().getPropertyDescriptors());
         //connection.
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             try (ResultSet rs = preparedStatement.executeQuery()) {
                 while (rs.next()) {
-                    try {
-                        returnObject = objectInformation.getObjectClass().newInstance();
-                    } catch (InstantiationException e) {
-
-                    } catch (IllegalAccessException e) {
-                        e.printStackTrace();
-                    }
+                    returnObject = objectInformation.getObjectClass().newInstance();
                     ResultSetMetaData metaData = rs.getMetaData();
                     for (int i=1;i<=metaData.getColumnCount();i++){
                         final String columnName = metaData.getColumnName(i).toLowerCase();
-                        T finalReturnObject = returnObject;
-                        Arrays.stream(objectInformation.getBeanInfo().getPropertyDescriptors())
+                        PropertyDescriptor findPropertyDescriptor = propertyDescriptors.stream()
                                 .filter(propertyDescriptor -> propertyDescriptor.getName().equals(columnName))
-                                .forEach(propertyDescriptor -> {
-                                    try {
-                                        propertyDescriptor.getWriteMethod()
-                                                .invoke(finalReturnObject, rs.getObject(columnName));
-                                    } catch (IllegalAccessException e) {
-                                        e.printStackTrace();
-                                    } catch (InvocationTargetException e) {
-                                        e.printStackTrace();
-                                    } catch (SQLException e) {
-                                        e.printStackTrace();
-                                    }
-                                });
+                                .findFirst()
+                                .orElse(null);
+                        findPropertyDescriptor.getWriteMethod().invoke(returnObject, rs.getObject(columnName));
                     }
                 }
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return returnObject;
     }
 
     public <T> List<T> listQuery(String sql, Class<T> returnClass){
         List<T> mappingObjects = new ArrayList<T>();
         ObjectInformation<T> objectInformation = (ObjectInformation<T>) this.OMMperFactory.getObjectInformationMap().get(returnClass);
+        List<PropertyDescriptor> propertyDescriptors = Arrays.asList(objectInformation.getBeanInfo().getPropertyDescriptors());
         //connection.
         try (Statement statement = connection.createStatement()) {
             try (ResultSet rs = statement.executeQuery(sql)) {
                 while (rs.next()) {
-                    T entityObject= objectInformation.getObjectClass().newInstance();
+                    T object= objectInformation.getObjectClass().newInstance();
                     ResultSetMetaData metaData = rs.getMetaData();
                     for (int i=1;i<=metaData.getColumnCount();i++){
                         final String columnName = metaData.getColumnName(i).toLowerCase();
-                        Arrays.stream(objectInformation.getBeanInfo().getPropertyDescriptors())
+                        PropertyDescriptor findPropertyDescriptor = propertyDescriptors.stream()
                                 .filter(propertyDescriptor -> propertyDescriptor.getName().equals(columnName))
-                                .forEach(propertyDescriptor -> {
-                                    try {
-                                        propertyDescriptor.getWriteMethod()
-                                                .invoke(entityObject, rs.getObject(columnName));
-                                    } catch (IllegalAccessException e) {
-                                        e.printStackTrace();
-                                    } catch (InvocationTargetException e) {
-                                        e.printStackTrace();
-                                    } catch (SQLException e) {
-                                        e.printStackTrace();
-                                    }
-                                });
+                                .findFirst()
+                                .orElse(null);
+                        findPropertyDescriptor.getWriteMethod().invoke(object, rs.getObject(columnName));
                     }
-                    mappingObjects.add(entityObject);
+                    mappingObjects.add(object);
                 }
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
                 e.printStackTrace();
             }
         } catch (SQLException e) {
@@ -123,37 +108,30 @@ public class OMMaper {
     }
 
     public <K,V> Map<K,V> mapQuery(String sql, Class<V> returnClass){
-        System.out.println(sql);
         Map<K,V> mappingObjects = new HashMap<K,V>();
         ObjectInformation<V> objectInformation = (ObjectInformation<V>) this.OMMperFactory.getObjectInformationMap().get(returnClass);
+        List<PropertyDescriptor> propertyDescriptors = Arrays.asList(objectInformation.getBeanInfo().getPropertyDescriptors());
         //connection.
         try (Statement statement = connection.createStatement()) {
             try (ResultSet rs = statement.executeQuery(sql)) {
                 while (rs.next()) {
-                    V entityObject= objectInformation.getObjectClass().newInstance();
+                    V object= objectInformation.getObjectClass().newInstance();
                     ResultSetMetaData metaData = rs.getMetaData();
                     for (int i=1;i<=metaData.getColumnCount();i++){
                         final String columnName = metaData.getColumnName(i).toLowerCase();
-                        Arrays.stream(objectInformation.getBeanInfo().getPropertyDescriptors())
+                        PropertyDescriptor findPropertyDescriptor = propertyDescriptors.stream()
                                 .filter(propertyDescriptor -> propertyDescriptor.getName().equals(columnName))
-                                .forEach(propertyDescriptor -> {
-                                    try {
-                                        propertyDescriptor.getWriteMethod()
-                                                .invoke(entityObject, rs.getObject(columnName));
-                                    } catch (IllegalAccessException e) {
-                                        e.printStackTrace();
-                                    } catch (InvocationTargetException e) {
-                                        e.printStackTrace();
-                                    } catch (SQLException e) {
-                                        e.printStackTrace();
-                                    }
-                                });
+                                .findFirst()
+                                .orElse(null);
+                        findPropertyDescriptor.getWriteMethod().invoke(object, rs.getObject(columnName));
                     }
-                    mappingObjects.put((K) objectInformation.getKeyField().get(entityObject),entityObject);
+                    mappingObjects.put((K) objectInformation.getKeyField().get(object),object);
                 }
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
                 e.printStackTrace();
             }
         } catch (SQLException e) {
