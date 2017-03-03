@@ -14,7 +14,7 @@ import java.util.*;
 /**
  * Created by 김종인 on 2017-02-26.
  */
-public class exTest extends OMMaper {
+public class exTest {
     @Test
     public void 클래스정보가져오기(){
         System.out.println(User.class);
