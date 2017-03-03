@@ -1,67 +1,57 @@
-package net.zzong.ormex.orm;
+package net.zzong.omex.om;
 
-
-import net.zzong.ormex.supertypetoken.TypeReference;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.sql.*;
 import java.util.*;
 
 /**
  * Created by 김종인 on 2017-02-21.
  */
-public class ORMMaper {
+public class OMMaper {
 
     Connection connection;
-    ORMMperFactory ORMMperFactory;
+    OMMperFactory OMMperFactory;
 
-    public ORMMaper(Connection connection,ORMMperFactory ORMMperFactory) {
+    public OMMaper(Connection connection, OMMperFactory OMMperFactory) {
         this.connection = connection;
-        this.ORMMperFactory = ORMMperFactory;
+        this.OMMperFactory = OMMperFactory;
     }
 
 
-    public <T> T query(String sql, TypeReference<T> tr) {
+    public <T> T query(String sql, Type type) {
         T t=null;
-        if(tr.type instanceof Class<?>){//TypeReference<String>
-            t = classQuery(sql, (Class<T>)tr.type);
-            //return ((Class<T>)tr.type).cast(map.get(tr.type));
-        } else { //TypeReference<List<String>>
-            ParameterizedType pt = (ParameterizedType) tr.type;
+        if(type instanceof ParameterizedType){
+            ParameterizedType pt = (ParameterizedType) type;
             if(List.class.equals(pt.getRawType())) {
                 Class<T> cls =(Class<T>)pt.getActualTypeArguments()[0];
                 return (T)listQuery(sql, cls);
             } else if(Map.class.equals(pt.getRawType())){
                 Class<T> cls =(Class<T>)pt.getActualTypeArguments()[1];
                 return (T)mapQuery(sql, cls);
-            }
+            } else throw new RuntimeException("지원하지 않는 타입 입니다.");
+        } else {
+            t = classQuery(sql, (Class<T>)type);
         }
         return t;
     }
 
-    public <T> T classQuery(String sql, Class<T> returnClass){
-        BeanInfo beanInfo = null;
+    public <T> T classQuery(String sql, Class<T> returnClass) {
         T returnObject = null;
-        try {
-            beanInfo = Introspector.getBeanInfo(returnClass);
-        } catch (IntrospectionException e) {
-            e.printStackTrace();
-        }
-
-
+        ObjectInformation<T> objectInformation = (ObjectInformation<T>) this.OMMperFactory.getObjectInformationMap().get(returnClass);
         //connection.
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             try (ResultSet rs = preparedStatement.executeQuery()) {
                 while (rs.next()) {
-
                     try {
-                        returnObject = returnClass.newInstance();
+                        returnObject = objectInformation.getObjectClass().newInstance();
                     } catch (InstantiationException e) {
-                        e.printStackTrace();
+
                     } catch (IllegalAccessException e) {
                         e.printStackTrace();
                     }
@@ -69,7 +59,7 @@ public class ORMMaper {
                     for (int i=1;i<=metaData.getColumnCount();i++){
                         final String columnName = metaData.getColumnName(i).toLowerCase();
                         T finalReturnObject = returnObject;
-                        Arrays.stream(beanInfo.getPropertyDescriptors())
+                        Arrays.stream(objectInformation.getBeanInfo().getPropertyDescriptors())
                                 .filter(propertyDescriptor -> propertyDescriptor.getName().equals(columnName))
                                 .forEach(propertyDescriptor -> {
                                     try {
@@ -95,12 +85,12 @@ public class ORMMaper {
 
     public <T> List<T> listQuery(String sql, Class<T> returnClass){
         List<T> mappingObjects = new ArrayList<T>();
-        ObjectInformation<T> objectInformation = (ObjectInformation<T>) this.ORMMperFactory.getObjectInformationMap().get(returnClass);
+        ObjectInformation<T> objectInformation = (ObjectInformation<T>) this.OMMperFactory.getObjectInformationMap().get(returnClass);
         //connection.
         try (Statement statement = connection.createStatement()) {
             try (ResultSet rs = statement.executeQuery(sql)) {
                 while (rs.next()) {
-                    T entityObject= objectInformation.getEntityClass().newInstance();
+                    T entityObject= objectInformation.getObjectClass().newInstance();
                     ResultSetMetaData metaData = rs.getMetaData();
                     for (int i=1;i<=metaData.getColumnCount();i++){
                         final String columnName = metaData.getColumnName(i).toLowerCase();
@@ -135,12 +125,12 @@ public class ORMMaper {
     public <K,V> Map<K,V> mapQuery(String sql, Class<V> returnClass){
         System.out.println(sql);
         Map<K,V> mappingObjects = new HashMap<K,V>();
-        ObjectInformation<V> objectInformation = (ObjectInformation<V>) this.ORMMperFactory.getObjectInformationMap().get(returnClass);
+        ObjectInformation<V> objectInformation = (ObjectInformation<V>) this.OMMperFactory.getObjectInformationMap().get(returnClass);
         //connection.
         try (Statement statement = connection.createStatement()) {
             try (ResultSet rs = statement.executeQuery(sql)) {
                 while (rs.next()) {
-                    V entityObject= objectInformation.getEntityClass().newInstance();
+                    V entityObject= objectInformation.getObjectClass().newInstance();
                     ResultSetMetaData metaData = rs.getMetaData();
                     for (int i=1;i<=metaData.getColumnCount();i++){
                         final String columnName = metaData.getColumnName(i).toLowerCase();
@@ -179,6 +169,6 @@ public class ORMMaper {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        this.ORMMperFactory.getOrmMapers().remove(this);
+        this.OMMperFactory.getOMMapers().remove(this);
     }
 }

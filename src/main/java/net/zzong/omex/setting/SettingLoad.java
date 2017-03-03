@@ -1,12 +1,10 @@
-package net.zzong.ormex.setting;
+package net.zzong.omex.setting;
 
 import org.apache.commons.dbcp2.BasicDataSource;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 
 /**
  * Created by 김종인 on 2017-02-24.

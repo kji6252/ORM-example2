@@ -1,11 +1,9 @@
-package net.zzong.ormex.orm;
+package net.zzong.omex.om;
 
-import net.zzong.ormex.model.User;
-import net.zzong.ormex.supertypetoken.TypeReference;
+import net.zzong.omex.model.User;
+import net.zzong.omex.supertypetoken.TypeReference;
 import org.junit.Test;
 
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;

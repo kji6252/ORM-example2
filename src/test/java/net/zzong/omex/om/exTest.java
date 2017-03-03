@@ -1,6 +1,6 @@
-package net.zzong.ormex.orm;
+package net.zzong.omex.om;
 
-import net.zzong.ormex.model.User;
+import net.zzong.omex.model.User;
 import org.junit.Test;
 
 import java.beans.BeanInfo;

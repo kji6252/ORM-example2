@@ -1,12 +1,8 @@
-package net.zzong.ormex.orm;
+package net.zzong.omex.om;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.dbcp2.BasicDataSource;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
@@ -17,14 +13,14 @@ import java.util.concurrent.ConcurrentLinkedDeque;
  * Created by 김종인 on 2017-02-21.
  */
 @Getter
-public class ORMMperFactory {
+public class OMMperFactory {
 
-    private Queue<ORMMaper> ormMapers;
+    private Queue<OMMaper> OMMapers;
     private BasicDataSource dataSource;
     private Map<Class, ObjectInformation<Class>> objectInformationMap;
 
-    public ORMMperFactory(BasicDataSource dataSource, List<Class> objectList) {
-        this.ormMapers = new ConcurrentLinkedDeque<>();
+    public OMMperFactory(BasicDataSource dataSource, List<Class> objectList) {
+        this.OMMapers = new ConcurrentLinkedDeque<>();
         this.dataSource = dataSource;
         this.objectInformationMap = objectInformationMap(objectList);
     }
@@ -38,18 +34,18 @@ public class ORMMperFactory {
         return entityInfomationMap;
     }
 
-    public ORMMaper getORMMaper() {
-        ORMMaper entityManager = null;
+    public OMMaper getOMMaper() {
+        OMMaper omMaper = null;
         try {
-            entityManager = new ORMMaper(this.dataSource.getConnection(), this);
+            omMaper = new OMMaper(this.dataSource.getConnection(), this);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        this.ormMapers.add(entityManager);
-        return entityManager;
+        this.OMMapers.add(omMaper);
+        return omMaper;
     }
 
     public void close(){
-        this.ormMapers.stream().forEach(ORMMaper::close);
+        this.OMMapers.stream().forEach(OMMaper::close);
     }
 }

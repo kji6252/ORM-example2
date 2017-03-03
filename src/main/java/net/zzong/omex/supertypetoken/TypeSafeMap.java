@@ -1,6 +1,4 @@
-package net.zzong.ormex.supertypetoken;
-
-import net.zzong.ormex.orm.ORMMperFactory;
+package net.zzong.omex.supertypetoken;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;

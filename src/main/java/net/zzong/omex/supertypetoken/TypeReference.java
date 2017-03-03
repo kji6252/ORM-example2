@@ -1,4 +1,4 @@
-package net.zzong.ormex.supertypetoken;
+package net.zzong.omex.supertypetoken;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;

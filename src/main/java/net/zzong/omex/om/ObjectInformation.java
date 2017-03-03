@@ -1,17 +1,13 @@
-package net.zzong.ormex.orm;
+package net.zzong.omex.om;
 
 import lombok.Data;
-import net.zzong.ormex.supertypetoken.TypeReference;
 
 import javax.persistence.Id;
-import javax.security.auth.kerberos.KerberosTicket;
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,17 +17,17 @@ import java.util.stream.Collectors;
  */
 @Data
 public class ObjectInformation<T> {
-    Class<T> entityClass;
+    Class<T> objectClass;
     String nativeTableName;
     BeanInfo beanInfo;
     List<PropertyDescriptor> propertyDescriptor;
     Field keyField;
 
-    public ObjectInformation(Class<T> entityClass) {
-        this.entityClass = entityClass;
+    public ObjectInformation(Class<T> objectClass) {
+        this.objectClass = objectClass;
         try {
-            nativeTableName = entityClass.getAnnotation(javax.persistence.Table.class).name();
-            beanInfo = Introspector.getBeanInfo(entityClass);
+            nativeTableName = objectClass.getAnnotation(javax.persistence.Table.class).name();
+            beanInfo = Introspector.getBeanInfo(objectClass);
         } catch (IntrospectionException e) {
             e.printStackTrace();
         }
@@ -44,7 +40,7 @@ public class ObjectInformation<T> {
                 .findFirst()
                 .orElse(null);
         */
-        keyField = Arrays.stream(entityClass.getDeclaredFields())
+        keyField = Arrays.stream(objectClass.getDeclaredFields())
                 .filter(field -> field.getAnnotation(Id.class) instanceof Id)
                 .findFirst()
                 .orElse(null);

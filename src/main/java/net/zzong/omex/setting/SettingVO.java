@@ -1,4 +1,4 @@
-package net.zzong.ormex.setting;
+package net.zzong.omex.setting;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

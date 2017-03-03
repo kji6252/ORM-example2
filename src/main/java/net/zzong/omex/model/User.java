@@ -1,14 +1,12 @@
-package net.zzong.ormex.model;
+package net.zzong.omex.model;
 
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import java.util.Date;
 
 @Data
