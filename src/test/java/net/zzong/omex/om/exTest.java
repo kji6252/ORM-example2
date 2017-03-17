@@ -25,10 +25,13 @@ public class exTest {
 
     @Test
     public void 클래스정보가져오기2() throws IntrospectionException {
-        BeanInfo beanInfo = Introspector.getBeanInfo(User.class);
-        System.out.println(beanInfo.getBeanDescriptor());
-        Arrays.stream(beanInfo.getPropertyDescriptors()).forEach(System.out::println);
-        Arrays.stream(beanInfo.getMethodDescriptors()).forEach(System.out::println);
+        BeanInfo userBeanInfo = Introspector.getBeanInfo(User.class);
+        //BeanInfo listBeanInfo = Introspector.getBeanInfo(List.class);
+        //BeanInfo listUserBeanInfo = Introspector.getBeanInfo(List<User>.class);
+
+        System.out.println(userBeanInfo.getBeanDescriptor());
+        Arrays.stream(userBeanInfo.getPropertyDescriptors()).forEach(System.out::println);
+        Arrays.stream(userBeanInfo.getMethodDescriptors()).forEach(System.out::println);
     }
 
     @Test
@@ -69,13 +72,13 @@ public class exTest {
 
     @Test
     public void 슈퍼타입토큰() throws IntrospectionException {
-        class Sub<T>{}
-        class Sup extends Sub<String> {}
+        class Sup<T>{}
+        class Sub extends Sup<String> {}
 
-        Sup sup = new Sup();
-        List<String> list= new ArrayList<String>();
-        System.out.println(sup.getClass().getGenericSuperclass());
-        System.out.println(list.getClass().getGenericSuperclass());
+        Sub sub = new Sub();
+        List<String> list= new ArrayList<>();
+        System.out.println(sub.getClass().getGenericSuperclass());
+        System.out.println(list.getClass());
     }
 
     @Test
@@ -89,6 +92,34 @@ public class exTest {
 
         System.out.println(new TypeReference<List<String>>(){}.type);
     }
+
+    @Test
+    public void 타입토큰과슈퍼타입토큰비교() throws IntrospectionException {
+        System.out.println(User.class);
+        System.out.println(List.class);
+        System.out.println(Map.class);
+
+        System.out.println(new TypeReference<User>(){}.type);
+        System.out.println(new TypeReference<List<User>>(){}.type);
+        System.out.println(new TypeReference<Map<Long,User>>(){}.type);
+        System.out.println(new TypeReference<List<List<User>>>(){}.type);
+        System.out.println(new TypeReference<List<Map<Long,User>>>(){}.type);
+    }
+
+    @Test
+    public void 노아규먼트생성자() throws IntrospectionException, IllegalAccessException, InstantiationException {
+        class ExampleUser{
+            public ExampleUser() {}
+        }
+        //Object o = ExampleUser.class.newInstance();
+        System.out.println(ExampleUser.class);
+        //ExampleUser eu = ;
+        Arrays.stream(ExampleUser.class.getConstructors()).forEach(System.out::println);
+        System.out.println();
+    }
+
+
+
 
 
 
