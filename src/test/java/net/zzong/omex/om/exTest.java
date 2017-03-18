@@ -17,22 +17,30 @@ import java.util.*;
 public class exTest {
     @Test
     public void 클래스정보가져오기(){
-        System.out.println(User.class);
-        System.out.println(User.class.getGenericSuperclass());
-        Arrays.stream(User.class.getAnnotations()).forEach(System.out::println);
+        //System.out.println(User.class);
+        //System.out.println(User.class.getGenericSuperclass());
+        //Arrays.stream(User.class.getAnnotations()).forEach(System.out::println);
         Arrays.stream(User.class.getDeclaredFields()).forEach(System.out::println);
     }
 
     @Test
-    public void 클래스정보가져오기2() throws IntrospectionException {
+    public void 빈디스크립터() throws IntrospectionException {
         BeanInfo userBeanInfo = Introspector.getBeanInfo(User.class);
-        //BeanInfo listBeanInfo = Introspector.getBeanInfo(List.class);
-        //BeanInfo listUserBeanInfo = Introspector.getBeanInfo(List<User>.class);
-
         System.out.println(userBeanInfo.getBeanDescriptor());
+    }
+
+    @Test
+    public void 프로퍼티디스크립터() throws IntrospectionException {
+        BeanInfo userBeanInfo = Introspector.getBeanInfo(User.class);
         Arrays.stream(userBeanInfo.getPropertyDescriptors()).forEach(System.out::println);
+    }
+    @Test
+    public void 메서드디스크립터() throws IntrospectionException {
+        BeanInfo userBeanInfo = Introspector.getBeanInfo(User.class);
         Arrays.stream(userBeanInfo.getMethodDescriptors()).forEach(System.out::println);
     }
+
+
 
     @Test
     public void 심플매핑() throws IntrospectionException {
@@ -71,14 +79,20 @@ public class exTest {
     }
 
     @Test
+    public void 타입토큰() throws IntrospectionException {
+        System.out.println(Integer.class);
+        System.out.println(String.class);
+        System.out.println(List.class);
+    }
+
+
+    @Test
     public void 슈퍼타입토큰() throws IntrospectionException {
         class Sup<T>{}
         class Sub extends Sup<String> {}
 
         Sub sub = new Sub();
-        List<String> list= new ArrayList<>();
         System.out.println(sub.getClass().getGenericSuperclass());
-        System.out.println(list.getClass());
     }
 
     @Test

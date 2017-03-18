@@ -33,16 +33,19 @@ public class Main {
             //User user = omMaper.query("select email from users",new TypeReference<User>(){}.type);
             //System.out.println(user);
             //타입에 유저만 있을경우 한오브젝트만 매핑
-            User user = omMaper.query("select * from users",User.class);
-            System.out.println(user);
+            //User user = omMaper.query("select * from users",User.class);
+            //System.out.println(user);
+
             //필드값에 이름만 있고 리스트타입에 유저가 있을경우
             //List<User> users = omMaper.query("select name from users",new TypeReference<List<User>>(){}.type);
             //System.out.println(users);
             //리스트타입에 유저가 있을경우
-            List<User> users = omMaper.query("select * from users",new TypeReference<List<User>>(){}.type);
+            List<User> users = omMaper.query("select * from users"
+                    ,new TypeReference<List<User>>(){}.type);
             System.out.println(users);
             //맵타입에 유저가 있을경우
-            Map<Long,User> userMap = omMaper.query("select * from users",new TypeReference<Map<Long,User>>(){}.type);
+            Map<Long,User> userMap = omMaper.query("select * from users"
+                    ,new TypeReference<Map<Long,User>>(){}.type);
             System.out.println(userMap);
 
         } catch (FileNotFoundException e) {

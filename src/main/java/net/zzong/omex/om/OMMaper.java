@@ -1,6 +1,8 @@
 package net.zzong.omex.om;
 
 
+import net.zzong.omex.model.User;
+
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
